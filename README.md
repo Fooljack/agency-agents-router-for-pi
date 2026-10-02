@@ -14,10 +14,25 @@ search/inspect/load implementation. Ported from the Hermes `agency-agents-router
 Codex / Claude Code 原生插件与 MCP 版本为 **1.2.0**。
 已有 PI 插件及 `.piplug` 保持 **1.0.0**，PI 运行逻辑和专家库不变。
 
+## 安装方式：只选一条路线
+
+**对同一客户端中的 Agency Agents Router，路线 A 和 B 只选一条，不需要把插件、MCP 和 Skill 全部重复安装。**
+
+| 路线 | 要安装什么 | MCP 工具 | Skill |
+| --- | --- | --- | --- |
+| A. 原生插件（推荐） | 只安装对应客户端的插件 | 插件自动注册，无需单独配置 | 插件已内置 `route`，无需另外安装 |
+| B. 独立 MCP | 不安装插件，单独配置 MCP 服务 | 必需，可直接使用三个工具 | 可选，帮助模型选择何时使用 Router |
+
+**安装插件后，跳过下文所有“独立 MCP”和“可选独立 Skill”步骤。**
+这里不是“插件 / MCP / Skill 三选一”：独立 Skill 只是使用说明，不包含工具后端，
+不能替代 MCP；独立 MCP 不安装 Skill 也能正常调用工具。
+Codex 和 Claude Code 分别选择自己的路线，可以在两个客户端各安装一个原生插件。
+
 ## Codex / Claude Code 快速安装
 
 需要 Node.js **20.19+** 在客户端的 PATH 中，推荐 Node 24 LTS。
-插件已经包含 npm 运行依赖和专家库，**安装后无需 `npm install` / `npm ci`，也无需手动复制 Skill**。
+插件已包含运行依赖、专家库和 `route` Skill，并自动注册 MCP。
+**安装后无需 `npm install` / `npm ci`、无需手动复制 Skill，也无需另外配置同一个 Router 的 MCP。**
 下载和更新插件需要网络；Router 的检索、查看和加载操作离线运行，不需要额外 API Key。
 
 ### Codex
@@ -60,7 +75,8 @@ claude plugin install agency-agents-router@fooljack-agency --scope user
 
 ## Standalone MCP / 独立接入
 
-不使用插件时，仍可从源代码注册标准 stdio MCP 服务：
+**仅适用于路线 B；已安装原生插件的用户请跳过整个章节。**
+不使用插件时，从源代码注册标准 stdio MCP 服务；Skill 可选，不是 MCP 的替代品。
 
 ```sh
 git clone https://github.com/Fooljack/agency-agents-router-for-pi.git
@@ -85,7 +101,7 @@ node scripts/print-config.js claude-code
 
 1. Download [`dist/com.fooljack.agency-agents-router-1.0.0.piplug`](dist/com.fooljack.agency-agents-router-1.0.0.piplug).
 2. In PI-Desktop, open **插件 / Plugins → ⋯ → 安装插件包 / Install package** and select the file.
-3. The native tools become available to the selected model. **Do not run `npm ci` for the PI package.**
+3. The package supplies the native tools and PI Skill. **No separate MCP/Skill setup or `npm ci` is needed for the PI package.**
 
 From source, use **Plugins → Load development plugin**. PI packaging must use
 PI-Desktop's `PluginCheck` and `PluginPack`, never a hand-made ZIP. Do not bundle

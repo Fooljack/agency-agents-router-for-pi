@@ -3,6 +3,17 @@
 推荐安装 **Agency Agents Router 原生插件 1.2.0**：一次安装注册 3 个 MCP 工具和
 `route` Skill，不必单独配置服务器或复制技能。PI 的 `.piplug` 不能用于 Claude Code。
 
+## 安装选择：只选一条路线
+
+| 路线 | 安装步骤 | 还要单独配置 MCP？ | 还要单独安装 Skill？ |
+| --- | --- | --- | --- |
+| A. 原生插件（推荐） | 按第 2 节安装插件 | 不要，插件已自动注册 | 不要，插件已包含 `route` |
+| B. 独立 MCP | 不安装插件，按“独立 MCP”章节配置服务 | 要 | 可选，不装也能调用 MCP 工具 |
+
+**安装插件后，跳过本文“独立 MCP”及其“可选独立 Skill”步骤。**
+这不是插件、MCP、Skill 三选一；单独安装 Skill 不会产生工具，不能替代 MCP。
+同一个 Claude Code 环境只保留一套 Router 接入；其他 MCP 和 Skill 不受影响。
+
 ## 1. 前置条件
 
 - 使用支持插件的 Claude Code；本版本使用 **Claude Code 2.1.287** 验证。
@@ -14,7 +25,7 @@
 新修改的 PATH：安装 Node 后关闭并重新打开应用。插件已打包全部 npm 运行依赖，
 **不要在插件缓存中运行 `npm install` / `npm ci`**。
 
-## 2. 从 GitHub 安装插件
+## 2. 路线 A：从 GitHub 安装插件
 
 ```sh
 claude plugin marketplace add Fooljack/agency-agents-router-for-pi
@@ -99,7 +110,9 @@ claude plugin marketplace remove fooljack-agency
 <a id="standalone-mcp"></a>
 ## 备选：独立 MCP 接入
 
-如果不使用原生插件，可继续使用源代码 MCP 服务。仅此方式需要安装 npm 依赖：
+**路线 B 专用：已经安装原生插件，请跳过本节和其中的可选 Skill 步骤。**
+不使用原生插件时，可以配置源代码 MCP 服务。MCP 必需、Skill 可选；
+仅此方式需要安装 npm 依赖：
 
 ```sh
 git clone https://github.com/Fooljack/agency-agents-router-for-pi.git

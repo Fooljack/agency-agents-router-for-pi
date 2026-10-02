@@ -4,6 +4,17 @@
 不支持插件的旧客户端仍可使用本文后半部分的 [独立 MCP](#standalone-mcp)。
 PI 的 `.piplug` 不能安装到 Codex。
 
+## 安装选择：只选一条路线
+
+| 路线 | 安装步骤 | 还要单独配置 MCP？ | 还要单独安装 Skill？ |
+| --- | --- | --- | --- |
+| A. 原生插件（推荐） | 按第 2 节安装插件 | 不要，插件已自动注册 | 不要，插件已包含 `route` |
+| B. 独立 MCP | 不安装插件，按“独立 MCP”章节配置服务 | 要 | 可选，不装也能调用 MCP 工具 |
+
+**安装插件后，跳过本文“独立 MCP”及其“可选独立 Skill”步骤。**
+这不是插件、MCP、Skill 三选一；单独安装 Skill 不会产生工具，不能替代 MCP。
+同一个 Codex 环境只保留一套 Router 接入；其他 MCP 和 Skill 不受影响。
+
 ## 1. 前置条件
 
 - 使用提供 `codex plugin` 命令的 Codex CLI；本版本使用 **CLI 0.160.0** 验证。
@@ -11,13 +22,13 @@ PI 的 `.piplug` 不能安装到 Codex。
 - 安装、更新时能访问 GitHub。Router 不要求额外 API Key；宿主模型仍需正常登录或配置。
 
 在同一环境运行 `node --version`。原生插件包含 SDK、npm 运行依赖和 279 位专家的数据，
-**不需要安装后执行 `npm ci`，也不需要手动复制 Skill**。
+**不需要运行 `npm ci`、复制 Skill 或另外配置同一个 Router 的 MCP**。
 客户端启动本地 stdio 进程，无需另开常驻终端或监听端口。
 
 桌面端、CLI 和 IDE 的插件入口、版本和组织策略可能不同；安装本机插件不会让
 Codex 网页版、云端、WSL 或容器自动获得本机运行时。请在实际执行 Codex 的环境中安装。
 
-## 2. 从 GitHub 安装原生插件
+## 2. 路线 A：从 GitHub 安装原生插件
 
 ```sh
 codex plugin marketplace add Fooljack/agency-agents-router-for-pi
@@ -100,8 +111,9 @@ codex plugin marketplace remove fooljack-agency
 <a id="standalone-mcp"></a>
 ## 备选：独立 MCP 接入
 
-标准 stdio MCP 适用于不使用原生插件的 Codex 桌面端、CLI 和 IDE。
-这一方式需要保留源码 checkout 并安装 npm 依赖：
+**路线 B 专用：已经安装原生插件，请跳过本节和其中的可选 Skill 步骤。**
+不使用原生插件时，标准 stdio MCP 可用于 Codex 桌面端、CLI 和 IDE。
+MCP 必需、Skill 可选；这一方式需要保留源码 checkout 并安装 npm 依赖：
 
 ```sh
 git clone https://github.com/Fooljack/agency-agents-router-for-pi.git
