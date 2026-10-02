@@ -1,0 +1,28 @@
+{
+  "name": "agency-agents-router",
+  "version": "1.1.0",
+  "private": true,
+  "description": "279 specialist personas for PI-Desktop, Codex and Claude Code, with a shared offline router and stdio MCP server.",
+  "license": "MIT",
+  "author": "Fooljack",
+  "type": "commonjs",
+  "main": "main.js",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fooljack/agency-agents-router-for-pi.git"
+  },
+  "scripts": {
+    "start": "node mcp-server.js",
+    "test": "node --test",
+    "test:pi": "node --test tests/roster.test.js tests/pi-host.test.js",
+    "test:mcp": "node --test tests/mcp.test.js tests/config.test.js",
+    "config:codex": "node scripts/print-config.js codex",
+    "config:claude-code": "node scripts/print-config.js claude-code"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.31.0"
+  }
+}
