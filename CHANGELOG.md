@@ -1,5 +1,19 @@
 # Changelog
 
+## Native Codex / Claude Code plugins 1.2.0
+
+- Add installable Codex and Claude Code plugin directories, each with an automatically registered stdio MCP server and a `route` Skill.
+- Publish separate marketplace catalogs under `.agents/plugins/` and `.claude-plugin/`, sharing the `agency-agents-router@fooljack-agency` install id.
+- Include the SDK, runtime dependencies and 279-persona roster in each plugin. End users need Node.js 20.19+ on PATH, but no npm install, build step, extra API key or manual Skill copy.
+- Use `${PLUGIN_ROOT}` / `${CLAUDE_PLUGIN_ROOT}` so installed cache directories do not depend on the source checkout. Include Codex Agent Plugins 1.0.0 manifests and compatibility declarations.
+- Generate plugins reproducibly with pinned esbuild; include complete dependency licenses and SHA-256 inventories. No installation hooks or runtime downloads.
+- Preflight the MCP roster through the shared handler, avoiding a second asset-path assumption when bundled.
+- Add tests for both copied plugin distributions, blocked external npm imports, Unicode/space-containing paths, inventory hashes and build reproducibility. Make CI explicitly install development build tools.
+- Document marketplace installation, verification, update, removal and migration from standalone MCP/Skill setup. Keep standalone MCP available.
+
+The PI adapter, PI manifest, original PI Skill, shared ranking/data and `1.0.0.piplug` remain unchanged.
+Native plugin packaging does not create independent agents or expand host permissions.
+
 ## MCP integration 1.1.0
 
 - Add a local stdio MCP server for Codex desktop/CLI/IDE, Claude Code and other MCP clients.

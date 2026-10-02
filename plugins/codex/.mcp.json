@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "agency-agents": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${PLUGIN_ROOT}/runtime/mcp-server.cjs"
+      ]
+    }
+  }
+}

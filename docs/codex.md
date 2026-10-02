@@ -1,28 +1,116 @@
-# Codex 桌面端 / CLI / IDE 接入
+# Codex 原生插件 / stdio MCP 接入
 
-使用本仓库的 **stdio MCP 服务**，不是安装 PI 的 `.piplug`。
-Codex 桌面端、CLI 和 IDE 扩展共用本地 MCP 配置。网页版或远端执行环境
-不会因此自动获得你本机的服务；应在实际运行 Codex 的环境中安装。
+推荐使用 **Agency Agents Router 原生插件 1.2.0**，一次安装获得 MCP 服务和 `route` Skill。
+不支持插件的旧客户端仍可使用本文后半部分的 [独立 MCP](#standalone-mcp)。
+PI 的 `.piplug` 不能安装到 Codex。
 
-## 1. 安装服务依赖
+## 1. 前置条件
 
-需要 Node.js **20.19 或更高版本**，推荐 Node.js 24 LTS。
-在一个长期保留的位置克隆仓库，然后安装锁定的依赖：
+- 使用提供 `codex plugin` 命令的 Codex CLI；本版本使用 **CLI 0.160.0** 验证。
+- Node.js **20.19+** 在 Codex 启动环境的 PATH 中，推荐 Node 24 LTS。
+- 安装、更新时能访问 GitHub。Router 不要求额外 API Key；宿主模型仍需正常登录或配置。
+
+在同一环境运行 `node --version`。原生插件包含 SDK、npm 运行依赖和 279 位专家的数据，
+**不需要安装后执行 `npm ci`，也不需要手动复制 Skill**。
+客户端启动本地 stdio 进程，无需另开常驻终端或监听端口。
+
+桌面端、CLI 和 IDE 的插件入口、版本和组织策略可能不同；安装本机插件不会让
+Codex 网页版、云端、WSL 或容器自动获得本机运行时。请在实际执行 Codex 的环境中安装。
+
+## 2. 从 GitHub 安装原生插件
+
+```sh
+codex plugin marketplace add Fooljack/agency-agents-router-for-pi
+codex plugin add agency-agents-router@fooljack-agency
+```
+
+安装标识由插件名 `agency-agents-router` 和市场名 `fooljack-agency` 组成。
+这是本仓库的自定义市场，不是官方市场收录声明。
+
+Codex 读取仓库的 `.agents/plugins/marketplace.json`，安装 `plugins/codex/`。
+该目录包含 Agent Plugins 1.0.0 的 `plugin.json` / `mcp.json`，以及旧版 Codex 的
+`.codex-plugin/plugin.json` / `.mcp.json` 兼容入口。
+服务路径通过 `${PLUGIN_ROOT}` 定位安装目录，不依赖源码 checkout 或固定的用户路径。
+
+## 3. 验证与使用
+
+```sh
+codex plugin list --marketplace fooljack-agency --json
+```
+
+预期插件版本 `1.2.0`，`installed` 和 `enabled` 都为 `true`。
+重开 Codex 会话，在插件/Skill 列表中选择 `agency-agents-router:route`，或直接输入：
+
+```text
+请使用 Agency Agents Router 的 route Skill 检索“前端性能优化”，
+查看并加载 frontend-developer。先确认工具能够返回结果，不修改项目。
+```
+
+在 CLI 会话中可通过 `/mcp` 检查连接，预期有以下三个工具：
+
+- `agency_agents_search`
+- `agency_agents_inspect`
+- `agency_agents_load`
+
+实际名称可能带插件或服务器前缀，以当前会话展示为准。
+`load` 只是返回专家参考提示词，不创建独立子代理，不切换模型，也不扩大工具权限。
+用户和更高优先级的宿主指令始终优先于专家文本。
+
+桌面端如提供插件管理入口，可在那里检查启用状态并选用 Skill。
+如果没有入口，先核对客户端版本/组织策略；也可使用下文的标准 MCP 配置。
+不要把某个 CLI 版本的安装结果当成所有桌面版本均已验证的证明。
+
+## 4. 更新与移除
+
+先刷新 Git 市场快照，再安装该市场的当前版本：
+
+```sh
+codex plugin marketplace upgrade fooljack-agency
+codex plugin add agency-agents-router@fooljack-agency
+```
+
+更新后重开会话。客户端的插件管理界面也可用于更新或停用插件。
+CLI 命令可能随版本变化，可用 `codex plugin marketplace --help` 核对。
+
+只移除这个插件：
+
+```sh
+codex plugin remove agency-agents-router@fooljack-agency
+```
+
+确认不再使用此市场中的任何插件后，才移除市场：
+
+```sh
+codex plugin marketplace remove fooljack-agency
+```
+
+不要删除整个 `CODEX_HOME`、`config.toml` 或其他插件缓存。
+
+## 5. 从 1.1.0 MCP / 独立 Skill 迁移
+
+避免让旧的独立 Router 和新插件同时注册：
+
+1. 检查 `codex mcp list` 与 `config.toml` 中是否已有自己添加的 `agency-agents`。
+2. 确认是旧 Router 后，执行 `codex mcp remove agency-agents`，或只移除
+   `[mcp_servers.agency-agents]` 段。保留其他 MCP、模型和供应商配置。
+3. 备份并移除此前复制到用户/项目 `.agents/skills/` 的 `agency-agents-router` 目录，
+   不动其他 Skill。
+4. 安装原生插件并重开会话。插件已经带 `route`，不要再次复制独立 Skill。
+
+<a id="standalone-mcp"></a>
+## 备选：独立 MCP 接入
+
+标准 stdio MCP 适用于不使用原生插件的 Codex 桌面端、CLI 和 IDE。
+这一方式需要保留源码 checkout 并安装 npm 依赖：
 
 ```sh
 git clone https://github.com/Fooljack/agency-agents-router-for-pi.git
 cd agency-agents-router-for-pi
-npm ci --ignore-scripts
+npm ci --omit=dev --ignore-scripts
 node mcp-server.js --version
 ```
 
-更新已有 checkout 时使用 `git pull --ff-only`，再运行 `npm ci --ignore-scripts`。
-服务使用本地 `data/agents.json`，不需要 API Key，不调用额外模型，不打开监听端口。
-安装依赖需要访问 npm；安装后检索和提示词加载离线运行。
-
-## 2. 配置 Codex
-
-### 方法 A：生成配置（推荐，适合 Windows 和桌面端）
+### 方法 A：生成完整路径配置
 
 在仓库中执行：
 
@@ -30,18 +118,16 @@ node mcp-server.js --version
 node scripts/print-config.js codex
 ```
 
-脚本输出当前 Node 可执行文件和服务文件的**绝对路径**，自动处理空格、中文和反斜杠。
-将输出的整个 `[mcp_servers.agency-agents]` 段合并进：
+将输出的整个 `[mcp_servers.agency-agents]` 段合并到以下位置的 `config.toml`：
 
 - Windows：`%USERPROFILE%\.codex\config.toml`
 - macOS / Linux：`~/.codex/config.toml`
-- 如果设置了 `CODEX_HOME`：使用该目录下的 `config.toml`
+- 自定义 `CODEX_HOME`：该目录下的 `config.toml`
 
-**不要覆盖整个配置文件**；保留已有的模型、供应商和其他 MCP 配置。
-如果已经有同名段，更新它，不要再添加第二个同名段。
-脚本只向终端打印配置，不会修改客户端配置文件。
+脚本只打印，不写设置；它会正确转义 Node 和服务绝对路径中的空格、中文和反斜杠。
+已有同名段时更新它，不重复添加，也不要覆盖整个配置文件。
 
-示意（用脚本的实际输出替换路径）：
+示意（使用脚本的实际输出替换路径）：
 
 ```toml
 [mcp_servers.agency-agents]
@@ -51,67 +137,49 @@ startup_timeout_sec = 20
 tool_timeout_sec = 60
 ```
 
-也可以在桌面端的 **Settings → MCP servers → Add server** 中选择 **STDIO**，
-填入相同的命令和参数，保存后重启该 MCP 服务。不同版本的菜单名称可能略有差异。
+桌面端如提供 **Settings → MCP servers → Add server**，选择 STDIO 并填入相同命令和参数。
+菜单名称可能随版本变化。移动仓库或 Node 后重新生成配置并重启服务。
 
-### 方法 B：使用 Codex CLI 注册
-
-如果 `node` 在 Codex 启动环境的 PATH 中：
+### 方法 B：CLI 注册
 
 ```sh
 codex mcp add agency-agents -- node "/absolute/path/agency-agents-router-for-pi/mcp-server.js"
 codex mcp list
 ```
 
-Windows 也可以使用类似 `"D:\AI Tools\agency-agents-router-for-pi\mcp-server.js"` 的绝对路径。
-桌面端找不到 `node` 时，改用方法 A 的完整 Node 路径。
+Windows 路径含空格时保留引号。桌面端找不到 PATH 中的 `node` 时使用方法 A 的完整路径。
+服务启动命令直接用 `node`，不要把 npm 横幅或 shell 提示混入 stdout。
 
-**启动命令直接使用 `node`，不要使用会往 stdout 打印提示的 npm 脚本或 shell 包装器。**
-客户端会自动启动服务，不需要提前手动运行，也不需要 HTTP URL。
+### 可选独立 Skill
 
-## 3. 可选：安装路由 Skill
+MCP 连接后，将仓库的 `integrations/skills/agency-agents-router/` 整个目录复制到一个位置：
 
-MCP 配好后，模型可以直接调用工具。Skill 只是帮助模型选择何时使用 Router。
-把仓库里的整个目录：
+- 用户级 `~/.agents/skills/agency-agents-router/`；或
+- 项目级 `<project>/.agents/skills/agency-agents-router/`。
 
-```text
-integrations/skills/agency-agents-router/
-```
-
-复制到以下位置之一，保持 `agency-agents-router/SKILL.md` 的层级：
-
-- 用户级：`~/.agents/skills/agency-agents-router/`
-- 项目级：`<你的项目>/.agents/skills/agency-agents-router/`
-
-不要同时复制到多个位置，也不要覆盖已有同名 Skill，除非确认要更新它。
-这是 Codex 的 Agent Skills 路径，不是 PI 的 `agents/skills` 目录。
-**只复制 Skill，不配置 MCP，不会产生这三个工具。**
-
-## 4. 验证
-
-重新打开 Codex 会话，或在设置里重启服务。CLI 可用 `/mcp` 查看连接状态。
-在会话里发送：
-
-```text
-请调用 agency-agents 的搜索工具检索“前端性能优化”，只返回前 3 个专家；
-再加载 frontend-developer，用来检查当前项目的页面性能。先不要修改文件。
-```
-
-应出现：`agency_agents_search`、`agency_agents_inspect`、`agency_agents_load`。
-实际工具名可能带 MCP 服务前缀，以客户端展示为准。
-工具会返回专家资料，不会自动创建独立子代理，也不会提高工具权限。
+不要覆盖需要保留的同名 Skill。只复制 Skill 不会注册工具，原生插件用户无需此步骤。
+更新源码 checkout 时执行 `git pull --ff-only` 后运行 `npm ci --omit=dev --ignore-scripts`。
+移除服务用 `codex mcp remove agency-agents`，再单独移除复制的 Skill。
 
 ## 常见问题
 
-- **找不到模块**：在同一个 checkout 重新运行 `npm ci --ignore-scripts`。
-- **ENOENT / 启动失败**：检查 Node 和 `mcp-server.js` 的绝对路径；移动仓库后重新生成配置。
-- **WSL / 容器 / 远程 Codex**：在对应环境安装 Node 和仓库，使用该环境的路径，不混用 Windows 路径。
-- **服务已配置但没有工具**：检查启用状态、项目信任和组织 MCP 策略，然后重开会话。
-- **供应商报 400/402**：这是模型协议或额度问题，安装 Router 不能修复供应商错误。
+- **没有 `codex plugin` 命令**：核对版本，升级客户端或使用独立 MCP；不要尝试导入 PI 插件包。
+- **找不到 Node / ENOENT**：检查 Codex 实际运行环境的 PATH。安装 Node 后重启桌面应用。
+  无法调整 PATH 时使用独立 MCP 的绝对 Node 路径。
+- **插件运行文件或 `agents.json` 缺失**：通过插件管理器更新/重装完整插件，不要只复制清单或单个脚本。
+  原生插件不依赖仓库的 `node_modules`。
+- **独立 MCP 提示 `Cannot find module`**：只在独立服务 checkout 运行 `npm ci --omit=dev --ignore-scripts`。
+- **已安装但没有工具或 Skill**：检查插件启用状态、项目信任和组织策略，重开会话。
+- **WSL / 容器 / 远程 Codex**：在对应环境安装 Node 和插件或仓库，不混用 Windows 路径。
+- **重复 MCP / Skill**：只清理自己添加的旧 Router 条目，保留其他配置。
+- **供应商 400/402、额度或上下文错误**：属于宿主模型/账号问题，Router 不能修复。
 
-移除 CLI 注册：`codex mcp remove agency-agents`。手动配置则只删除对应 MCP 段。
-如安装了 Skill，也可单独删除你复制的 Skill 目录。
+发布检查使用隔离 `CODEX_HOME`，不改用户正式配置，不全局安装 Codex。
+插件包测试覆盖独立目录运行和三个工具；桌面 GUI 与付费模型工作流不在本次自动验证范围内。
 
 官方参考：
+- https://developers.openai.com/codex/plugins/
+- https://developers.openai.com/codex/plugins/build/
+- https://agent-plugins.org/
 - https://developers.openai.com/codex/mcp/
 - https://developers.openai.com/codex/skills/

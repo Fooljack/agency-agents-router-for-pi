@@ -1,5 +1,5 @@
 ---
-name: agency-agents-router
+name: route
 description: Use for a task that benefits from a domain specialist, such as frontend architecture, security review, paid advertising, financial modelling or game level design. Search 279 bundled personas with the agency-agents MCP server and load one relevant specialist. 支持中文任务，如前端架构、渗透测试、广告投放、财务建模、关卡设计。
 ---
 

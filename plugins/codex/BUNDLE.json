@@ -1,0 +1,62 @@
+{
+  "name": "agency-agents-router",
+  "version": "1.2.0",
+  "target": "codex",
+  "node": ">=20.19.0",
+  "generator": "esbuild@0.28.2",
+  "dependencies": [
+    {
+      "name": "@modelcontextprotocol/sdk",
+      "version": "1.31.0",
+      "license": "MIT"
+    },
+    {
+      "name": "ajv",
+      "version": "8.20.0",
+      "license": "MIT"
+    },
+    {
+      "name": "ajv-formats",
+      "version": "3.0.1",
+      "license": "MIT"
+    },
+    {
+      "name": "fast-deep-equal",
+      "version": "3.1.3",
+      "license": "MIT"
+    },
+    {
+      "name": "fast-uri",
+      "version": "3.1.8",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "json-schema-traverse",
+      "version": "1.0.0",
+      "license": "MIT"
+    },
+    {
+      "name": "zod",
+      "version": "4.6.5",
+      "license": "MIT"
+    },
+    {
+      "name": "zod-to-json-schema",
+      "version": "3.25.2",
+      "license": "ISC"
+    }
+  ],
+  "files": {
+    ".codex-plugin/plugin.json": "ea2d749b263ab2a6421c71fa73cd2a10314da1fb13f3bc39da364bba7d4772a6",
+    ".mcp.json": "9d2a2f5684a3c48796a55a0a982af1765906f4a3bfb92336f202671739a16b46",
+    "LICENSE": "fd537350398e56da2f6487003bbc341737b2a5bbf103725ee64010af40d4702a",
+    "README.md": "014dffff747fcccdb71e19a81c924816a7332902c0935886c4fd0b365be76aae",
+    "THIRD_PARTY_NOTICES.md": "c2fcb194373c62683d1dbe6e84b837fa776adb2b9325acb17be25cc90859df1b",
+    "mcp.json": "faa10024506e54c0dc5d7da3b150ddfc610047b910ce13108678db7825e010e5",
+    "plugin.json": "db7c4714f1018c1da9ab37f66a5f900a896608663d2e05692e6db2538ba9d7c6",
+    "runtime/THIRD_PARTY_LICENSES.txt": "37134c19cf975052ab6b2459f8c51b1190fecf3659c7c54258caa95e7afca367",
+    "runtime/data/agents.json": "03c7d2265bc98f47786795a8a4500ff1c83c189d14844f4a4d4037434ee44ec3",
+    "runtime/mcp-server.cjs": "5b0516eacb97f451fde87d560312c78a6a8485673d168843233c0c1247d01ff5",
+    "skills/route/SKILL.md": "66f7253e542abe0187273c634d3ba70fcc1c8ce2c0f650fd35022ece4cefc9bb"
+  }
+}

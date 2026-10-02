@@ -1,0 +1,20 @@
+{
+  "name": "fooljack-agency",
+  "interface": {
+    "displayName": "Fooljack Agency Agents"
+  },
+  "plugins": [
+    {
+      "name": "agency-agents-router",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

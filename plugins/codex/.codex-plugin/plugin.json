@@ -1,0 +1,34 @@
+{
+  "name": "agency-agents-router",
+  "version": "1.2.0",
+  "description": "Search and load 279 specialist personas with an offline, read-only MCP router.",
+  "author": {
+    "name": "Fooljack",
+    "url": "https://github.com/Fooljack"
+  },
+  "homepage": "https://github.com/Fooljack/agency-agents-router-for-pi",
+  "repository": "https://github.com/Fooljack/agency-agents-router-for-pi",
+  "license": "MIT",
+  "keywords": [
+    "agents",
+    "router",
+    "specialists",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Agency Agents Router",
+    "shortDescription": "279 specialists for coding, research and business tasks",
+    "longDescription": "Search and load 279 specialist personas with an offline, read-only MCP router.",
+    "developerName": "Fooljack",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ],
+    "websiteURL": "https://github.com/Fooljack/agency-agents-router-for-pi",
+    "defaultPrompt": [
+      "为当前任务选择一位领域专家，并按其标准完成工作。"
+    ]
+  }
+}
